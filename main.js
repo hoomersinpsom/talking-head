@@ -80,28 +80,39 @@ function gotStream(stream) {
     // Create a new volume meter and connect it.
     meter = createAudioMeter(audioContext, null, 0.8);
     mediaStreamSource.connect(meter);
-
+    head = new Image();
+    head.src = './top.png';
+    head.onload = function(){
+        mouth = new Image();
+        mouth.src = './mouth.png';
+        mouth.onload = function(){
+            drawLoop(); 
+        }
+    }
     // kick off the visual updating
-    drawLoop();
+    //drawLoop();
 }
 
-function drawLoop( time ) {
+function drawLoop() {
     // clear the background
     canvasContext.fillStyle = "green";
     canvasContext.fillRect(0,0,200,200);
 
 
-    canvasContext.fillStyle = "black";
+    //canvasContext.fillStyle = "black";
 
     // draw a bar based on the current volume
     // canvasContext.fillRect(0, 0, meter.volume*WIDTH*1.4, HEIGHT);
-    canvasContext.fillRect(10, 10, 30, 30);
-    var top = ~~(40 + (meter.volume*20))
-    top = top > 41 ? top : 40
+    //canvasContext.fillRect(10, 10, 30, 30);
+    var offset = 79
+    var top = ~~(offset + (meter.volume*20))
+    top = top > offset + 1 ? top : offset
     var text = document.getElementById( "text" )
     text.innerText = top
-    canvasContext.fillRect(10,top, 30, 30);
+    canvasContext.drawImage(mouth, 8, top);
+    //canvasContext.fillRect(10,top, 30, 30);
 
+        canvasContext.drawImage(head, 0, 0);
     // set up the next visual callback
     rafID = window.requestAnimationFrame( drawLoop );
 }
