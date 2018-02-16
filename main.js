@@ -95,7 +95,7 @@ function gotStream(stream) {
 
 function drawLoop() {
     // clear the background
-    canvasContext.fillStyle = "green";
+    canvasContext.fillStyle = "#00ff00";
     canvasContext.fillRect(0,0,200,200);
 
 
@@ -104,12 +104,13 @@ function drawLoop() {
     // draw a bar based on the current volume
     // canvasContext.fillRect(0, 0, meter.volume*WIDTH*1.4, HEIGHT);
     //canvasContext.fillRect(10, 10, 30, 30);
-    var offset = 79
+    var offset = 80
     var top = ~~(offset + (meter.volume*20))
-    top = top > offset + 1 ? top : offset
+    //top = top % 5 == 0 ? top : offset
+    // top = Math.round(top / 4) * 4
     var text = document.getElementById( "text" )
-    text.innerText = top
-    canvasContext.drawImage(mouth, 8, top);
+    //text.innerText = top
+    canvasContext.drawImage(mouth, 9, top);
     //canvasContext.fillRect(10,top, 30, 30);
 
         canvasContext.drawImage(head, 0, 0);
