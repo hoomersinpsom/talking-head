@@ -31,11 +31,11 @@ var rafID = null;
 window.onload = function() {
 
     // grab our canvas
-	canvasContext = document.getElementById( "meter" ).getContext("2d");
-	
+    canvasContext = document.getElementById( "meter" ).getContext("2d");
+
     // monkeypatch Web Audio
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
-	
+
     // grab an audio context
     audioContext = new AudioContext();
 
@@ -43,57 +43,62 @@ window.onload = function() {
     try {
         // monkeypatch getUserMedia
         navigator.getUserMedia = 
-        	navigator.getUserMedia ||
-        	navigator.webkitGetUserMedia ||
-        	navigator.mozGetUserMedia;
+        navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia;
 
         // ask for an audio input
         navigator.getUserMedia(
         {
-            "audio": {
-                "mandatory": {
-                    "googEchoCancellation": "false",
-                    "googAutoGainControl": "false",
-                    "googNoiseSuppression": "false",
-                    "googHighpassFilter": "false"
-                },
-                "optional": []
+          "audio": {
+            "mandatory": {
+              "googEchoCancellation": "false",
+              "googAutoGainControl": "false",
+              "googNoiseSuppression": "false",
+              "googHighpassFilter": "false"
             },
+            "optional": []
+          },
         }, gotStream, didntGetStream);
-    } catch (e) {
+      } catch (e) {
         alert('getUserMedia threw exception :' + e);
+      }
+
     }
 
-}
 
+    function didntGetStream() {
+      alert('Stream generation failed.');
+    }
 
-function didntGetStream() {
-    alert('Stream generation failed.');
-}
+    var mediaStreamSource = null;
 
-var mediaStreamSource = null;
-
-function gotStream(stream) {
+    function gotStream(stream) {
     // Create an AudioNode from the stream.
     mediaStreamSource = audioContext.createMediaStreamSource(stream);
 
     // Create a new volume meter and connect it.
-    meter = createAudioMeter(audioContext, null, 0.8);
+    meter = createAudioMeter(audioContext, 0.9, 0.2);
     mediaStreamSource.connect(meter);
     head = new Image();
     head.src = './top.png';
     head.onload = function(){
+      bg = new Image();
+      bg.src = './bg.png';
+      bg.onload = function(){
         mouth = new Image();
         mouth.src = './mouth.png';
         mouth.onload = function(){
-            drawLoop(); 
+          drawLoop(); 
         }
+      }
     }
     // kick off the visual updating
     //drawLoop();
-}
-
-function drawLoop() {
+  }
+  eyesOpen = true
+  eyesOpen = true
+  function drawLoop() {
     // clear the background
     canvasContext.fillStyle = "#00ff00";
     canvasContext.fillRect(0,0,200,200);
@@ -101,19 +106,40 @@ function drawLoop() {
 
     //canvasContext.fillStyle = "black";
 
+
     // draw a bar based on the current volume
     // canvasContext.fillRect(0, 0, meter.volume*WIDTH*1.4, HEIGHT);
-    //canvasContext.fillRect(10, 10, 30, 30);
+    var left = 20;
     var offset = 80
-    var top = ~~(offset + (meter.volume*20))
+    var maxTop = offset + 16
+    canvasContext.drawImage(bg, 0, 16);
+    var top = ~~(offset + (meter.volume*maxTop*1.4))
+    if(top < 82) top = offset
+      if(top > maxTop) top = maxTop 
     //top = top % 5 == 0 ? top : offset
     // top = Math.round(top / 4) * 4
-    var text = document.getElementById( "text" )
-    //text.innerText = top
-    canvasContext.drawImage(mouth, 9, top);
+    // var text = document.getElementById( "text" )
+    // text.innerText = top + '|'+ meter.volume 
+    canvasContext.drawImage(mouth, 8 + left, top);
     //canvasContext.fillRect(10,top, 30, 30);
 
-        canvasContext.drawImage(head, 0, 0);
+    canvasContext.drawImage(head, 0 + left, 0);
+    if(eyesOpen){
+      var possible = ~~(Math.random() * 60)
+      if(possible == 15){
+        eyesOpen = false;
+        setTimeout(function(){
+            eyesOpen = true;
+        },300)
+      }
+    }
+    if(!eyesOpen){
+
+        canvasContext.fillStyle = "#afa096"
+        canvasContext.fillRect(44, 60, 12, 4);
+        canvasContext.fillRect(76, 60, 12, 4);
+    }
+    
     // set up the next visual callback
     rafID = window.requestAnimationFrame( drawLoop );
-}
+  }
