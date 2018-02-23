@@ -78,7 +78,7 @@ window.onload = function() {
     mediaStreamSource = audioContext.createMediaStreamSource(stream);
 
     // Create a new volume meter and connect it.
-    meter = createAudioMeter(audioContext, 0.9, 0.2);
+    meter = createAudioMeter(audioContext, 0.9, 0.9);
     mediaStreamSource.connect(meter);
     head = new Image();
     head.src = './top.png';
@@ -114,12 +114,13 @@ window.onload = function() {
     var maxTop = offset + 16
     canvasContext.drawImage(bg, 0, 16);
     var top = ~~(offset + (meter.volume*maxTop*1.4))
+    if(top < offset + 5) top = offset;
     if(top < 82) top = offset
       if(top > maxTop) top = maxTop 
     //top = top % 5 == 0 ? top : offset
     // top = Math.round(top / 4) * 4
-    // var text = document.getElementById( "text" )
-    // text.innerText = top + '|'+ meter.volume 
+    //var text = document.getElementById( "text" )
+    //text.innerText = top + '|'+ meter.volume 
     canvasContext.drawImage(mouth, 8 + left, top);
     //canvasContext.fillRect(10,top, 30, 30);
 
