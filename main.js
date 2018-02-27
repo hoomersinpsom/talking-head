@@ -27,6 +27,7 @@ var canvasContext = null;
 var WIDTH=500;
 var HEIGHT=50;
 var rafID = null;
+window.inputRange = 100
 
 window.onload = function() {
 
@@ -105,7 +106,7 @@ function drawLoop() {
     // canvasContext.fillRect(0, 0, meter.volume*WIDTH*1.4, HEIGHT);
     //canvasContext.fillRect(10, 10, 30, 30);
     var offset = 80
-    var top = ~~(offset + (meter.volume*20))
+    var top = ~~(offset + (meter.volume*window.inputRange))
     //top = top % 5 == 0 ? top : offset
     // top = Math.round(top / 4) * 4
     var text = document.getElementById( "text" )
